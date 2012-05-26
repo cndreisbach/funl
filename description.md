@@ -28,7 +28,12 @@ combination of values and functions in the language.
 
 ## Values
 
-There are four types of values in FunL: numbers, strings, sequences, and maps.
+There are five types of values in FunL: booleans, numbers, strings,
+sequences, and maps.
+
+### Booleans
+
+There are two boolean values, true (`#t`) and false (`#f`).
 
 ### Numbers
 
@@ -82,10 +87,12 @@ parentheses for operation order, like so:
 
 All values are also functions.
 
-* Numbers: numbers take any value as an argument and evaluate to
-  themselves.
+* Booleans, numbers, and strings: these values take any value as an
+  argument and evaluate to themselves.
 
+    `#t:1 // => #t`
     `3.14:1 // => 3.14`
+    `"hello world":1 //=> "hello world"`
 
 * Strings: strings take any value as an argument and evaluate to
   themselves.
@@ -191,3 +198,46 @@ constant operator.
 
 This is obviously not optimal. _Patterns_, a more powerful conditional
 form, are being considered.
+
+## Primitives
+
+FunL comes with a predefined set of primitive functions used to build other functions.
+
+### Values
+
+`id` takes a value and returns that same value.
+
+### Arithmetic
+
+`+`, `-`, `*`, and `/` are all functions that take a sequence as an
+argument and return the sum, difference, product, or quotient of the
+first and second members of the sequence.
+
+`==`, `<>`, `>`, `<`, `>=`, `<=` are all functions that take a
+sequence as an argument and compare the first and second members of
+the sequence, returning true or false.
+
+### Sequences
+
+`fold` takes a function and returns a new function that will take the
+first two elements of a sequence, create a new sequence from them, and
+apply the original function to them. The function then takes that
+result, creates a new sequence of two elements from that result and
+the next element of the sequence, and applies the original function to
+that sequence. This continues until the sequence is exhausted, at
+which point the function returns the result.
+
+    (fold:+):[1, 2, 3, 4] // => 10
+    // This becomes the following:
+    +:[+:[+:1,2, 3], 4]
+
+`map` takes a function and returns a new function that will apply the
+original function to every element of a sequence, returning a new
+transformed sequence.
+
+    double = <id, 2> | *
+    (map:double):[2, 3, 4] // => [4, 6, 8]
+
+`reverse` takes a sequence and returns that sequence reversed.
+
+    reverse:[2, 3, 4] // => [4, 3, 2]
