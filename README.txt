@@ -29,15 +29,15 @@ http://github.com/crnixon/funl/blob/master/description.md.
 
 EXAMPLE
 
-def length = map[1] | fold[+]
+def length = map:1 | fold:+
 
-length:<1, 2, 3> // => 3
+length:[1, 2, 3] // => 3
 
 // Decomposition of the above
-// (map[1] | fold[+]):<1, 2, 3>
-// fold[+]:(map[1]:<1, 2, 3>)
-// fold[+]:<1:1, 1:2, 1:3>
-// fold[+]:<1, 1, 1>
+// (map:1 | fold:+):[1, 2, 3]
+// (fold:+):(map:1):<1, 2, 3>
+// (fold:+):<1:1, 1:2, 1:3>
+// (fold:+):<1, 1, 1>
 // 3 
 
 

@@ -48,9 +48,9 @@ Sequences are heterogenous lists of other values. No guarantee is made
 as to their implementation currently, so they may be linked lists or
 based on JavaScript arrays.
 
-Sequences are denoted by parentheses, like so:
+Sequences are denoted by square brackets, like so:
 
-    (1, 2, 3, "four", (5, 6))
+    [1, 2, 3, "four", [5, 6]]
 
 ### Maps
 
@@ -68,15 +68,15 @@ Maps are denoted by curly braces, like so:
 
 Functions are applied to one and only one argument (a value or
 function) at a time and return one value or function. This looks like
-either of the following:
+the following:
 
     function:argument
-    function[argument]
 
-The first form is the common form of application. It is evaluated
-right-to-left. The second form is used to change evaluation rules: it
-binds tighter than the first form. It is most usually used with
-functions that return other functions.
+Application is evaluated right-to-left, so if a function returns
+another function which you wish to apply, you will need to use
+parentheses for operation order, like so:
+
+    (fold:+):[1, 2, 3]
 
 ### Values as Functions
 
@@ -97,7 +97,7 @@ All values are also functions.
   zero. If the argument is too large an index for the sequence, an
   exception is raised.
 
-    `("a", "b", "c"):2 // => "c"`
+    `["a", "b", "c"]:2 // => "c"`
 
 * Maps: maps take any value as an argument and evaluate to the value
   associated with that key. If the argument does not exist in the map
@@ -112,7 +112,7 @@ All values are also functions.
 
 A function can be defined and assigned to a keyword like so:
 
-    length = map[1] | fold[+]
+    length = map:1 | fold:+
 
 While the right side of this definition may not yet make sense, the
 left side should. "length" is the keyword that we are assigning the
@@ -125,7 +125,7 @@ new function which constructs a sequence of each function applied to
 the argument. An example:
 
     sum-and-multiple = <sum, multiple>
-    sum-and-multiple:(1, 2, 3, 4) // => (10, 24)
+    sum-and-multiple:[1, 2, 3, 4] // => [10, 24]
 
 ### Composition
 
@@ -133,12 +133,12 @@ Given functions `f` and `g`, `g | f` composes a new function which
 will apply the function `g` to the argument, then the function `f` to
 the result. An example:
 
-    length = map[1] | fold[+]
-    length:("a", "b", "cde") // => 3
+    length = map:1 | fold:+
+    length:["a", "b", "cde"] // => 3
 
     // This is the same as:
 
-    fold[+]:map[1]:("a", "b", "cde")
+    (fold:+):(map:1):["a", "b", "cde"]
 
 Note that the functions are applied in left-to-right order. This
 resembles the pipe syntax of Unix shells, where an input is sent to
@@ -159,7 +159,7 @@ function-level languages, the constant function was necessary because
 values were not functions. Therefore, the length function above would
 look like this:
 
-    length = map[~1] | fold[+]
+    length = map:~1 | fold:+
 
 You may, however, for some reason, want to create a function that
 returns a sequence, map, or other function, in which case the constant
@@ -172,9 +172,9 @@ control. Given a predicate and two results, it will return a function
 that returns the first result if the predicate is true and the second
 result if the predicate is false. An example:
 
-    [odd -> "odd"; "even"]:3
+    (odd -> "odd"; "even"):3
 
-The condition must have brackets around it if used inline, but can be
+The condition must have parentheses around it if used inline, but can be
 left bare for definition:
 
     odd-or-even = odd -> "odd"; "even"
@@ -185,8 +185,9 @@ you do not want to use the value in the results. In this case, use the
 constant operator.
 
     // Will not work
-    [odd -> sin; cos][3]:1.0 // => results in sin:3, which is then applied to 1.0, resulting in 3.
+    ((odd -> sin; cos):3):1.0 // => results in sin:3, which is then applied to 1.0, resulting in 3.
     // Will work
-    [odd -> ~sin; ~cos][3]:1.0 // => results in ~sin[3]:1.0, which is sin, which is then applied to 1.0.
+    ((odd -> ~sin; ~cos):3):1.0 // => results in (~sin:3):1.0. ~sin:3 is sin, which is then applied to 1.0.
 
-This is obviously not optimal. _Patterns_, a more powerful conditional form, are being considered.
+This is obviously not optimal. _Patterns_, a more powerful conditional
+form, are being considered.
