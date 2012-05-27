@@ -125,6 +125,10 @@ While the right side of this definition may not yet make sense, the
 left side should. "length" is the keyword that we are assigning the
 function to.
 
+Keywords must begin with an alphabetic character and then can be made
+up of alphanumberic characters, plus the characters +, -, *, /, !, and
+?.
+
 ### Construction
 
 For any set of functions f1, f2, ... fn; `<f1, f2, ... fn>` creates a

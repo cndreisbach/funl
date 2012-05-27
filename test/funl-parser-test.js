@@ -1,6 +1,7 @@
 var should = require('chai').should();
 var Assertion = require('chai').Assertion;
 var parse = require('../lib/funl-parser').Parser.parse;
+var inspect = require('util').inspect;
 
 Assertion.addMethod('mapTo', function (compObj) {
   var obj = this._obj;
@@ -80,5 +81,27 @@ describe("The FunL parser", function() {
     var it = parse("(first:second):third");
     it.value[0].should.have.property('type', 'application');
     it.value[1].should.mapTo({type: "keyword", value: "third"});
+  });
+
+  it("should handle construction", function() {
+    var it = parse("<first second third>");
+    it.should.have.property('type', 'construction');
+    it.value.should.have.length(3);
+    it.value[0].should.mapTo({type: "keyword", value: "first"});
+  });
+
+  it("should handle composition", function() {
+    var it = parse("a:b | c");
+    it.should.have.property('type', 'composition');
+    it.value.should.have.length(2);
+    it.value[1].should.mapTo({type: "keyword", value: "c"});
+  });
+
+  it("should handle composition with multiple pipes", function() {
+    var it = parse("a:b | c | d");
+    it.should.have.property('type', 'composition');
+    it.value.should.have.length(2);
+    it.value[1].should.have.property('type', 'composition');
+    it.value[1].value[1].should.mapTo({type: "keyword", value: "d"});
   });
 });
