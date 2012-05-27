@@ -72,7 +72,7 @@ describe("The FunL parser", function() {
   });
 
   it("should nest application right-to-left", function() {
-    var it = parse("first:second:third");
+    var it = parse("first: second: third");
     it.value[0].should.mapTo({type: "keyword", value: "first"});
     it.value[1].should.have.property('type', 'application');
   });
