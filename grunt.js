@@ -21,6 +21,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['lib/**/*.js',
+              'test/**/*.js',
               '<config:lint.files>',
               'lib/funl.pegjs'],
       tasks: 'default'

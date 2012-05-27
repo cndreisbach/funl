@@ -43,6 +43,13 @@ describe("The FunL parser", function() {
     it.value[0].should.mapTo({type: 'int', value: 1});
   });
 
+  it("should parse sequences with complex values", function() {
+    var it = parse('[inc:2 4 "hello"]');
+    it.should.have.property('type', 'seq');
+    it.value.should.have.length(3);
+    it.value[0].should.have.property('type', 'application');
+  });
+
   it("should parse maps", function() {
     var it = parse('{"foo" 1 "bar" 2}');
     it.should.have.property('type', 'map');
@@ -55,5 +62,23 @@ describe("The FunL parser", function() {
     var it = parse("  [ 1\n  2  \n 3 ]\n");
     it.should.have.property('type', 'seq');
     it.value.should.have.length(3);
+  });
+
+  it("should parse function application", function() {
+    var it = parse("range:[1, 10]");
+    it.should.have.property('type', 'application');
+    it.value[0].should.mapTo({type: "keyword", value: "range"});
+  });
+
+  it("should nest application right-to-left", function() {
+    var it = parse("first:second:third");
+    it.value[0].should.mapTo({type: "keyword", value: "first"});
+    it.value[1].should.have.property('type', 'application');
+  });
+
+  it("should use parentheses to nest application differently", function() {
+    var it = parse("(first:second):third");
+    it.value[0].should.have.property('type', 'application');
+    it.value[1].should.mapTo({type: "keyword", value: "third"});
   });
 });
