@@ -104,4 +104,18 @@ describe("The FunL parser", function() {
     it.value[1].should.have.property('type', 'composition');
     it.value[1].value[1].should.mapTo({type: "keyword", value: "d"});
   });
+
+  it("should handle conditionals", function() {
+    var it = parse("a ? b ; c");
+    it.should.have.property("type", "conditional");
+    it.value.should.have.length(3);
+  });
+
+  it("should be able to handle complex conditionals", function() {
+    var it = parse("(a | b):1 ? ~b:2 ; <b, c>");
+    it.type.should.eq("conditional");
+    it.value[0].type.should.eq("application");
+    it.value[1].type.should.eq("application");
+    it.value[2].type.should.eq("construction");
+  });
 });
