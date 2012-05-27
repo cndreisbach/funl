@@ -118,4 +118,11 @@ describe("The FunL parser", function() {
     it.value[1].type.should.eq("application");
     it.value[2].type.should.eq("construction");
   });
+
+  it("should handle definitions", function() {
+    var it = parse("length = (map:1) | (fold:+)");
+    it.type.should.eq("definition");
+    it.value.should.have.length(2);
+    it.value[0].should.mapTo({type: "keyword", value: "length"});
+  });
 });
