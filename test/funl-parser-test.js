@@ -61,8 +61,8 @@ describe("The FunL parser", function() {
     it.value[1].should.mapTo({type: "int", value: 1});
   });
 
-  it("can handle whitespace and newlines", function() {
-    var it = eparse("[ 1\n  2  \n 3 ]\n");
+  it("can handle whitespace, newlines, and comments", function() {
+    var it = eparse("[ 1\n  2 // two is a magic number \n 3 ]\n");
     it.should.have.property('type', 'seq');
     it.value.should.have.length(3);
   });
