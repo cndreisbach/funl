@@ -17,7 +17,8 @@ module.exports = function(grunt) {
       }
     },
     lint: {
-      files: ['grunt.js']
+      files: ['grunt.js',
+              'lib/funl.js']
     },
     watch: {
       files: ['lib/**/*.js',
