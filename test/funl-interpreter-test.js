@@ -14,4 +14,17 @@ describe("The FunL interpreter", function() {
   it("should interpret strings", function() {
     evalFunL('"hello world"').print().should.eq('"hello world"');
   });
+
+  it("should evaluate keywords", function() {
+    var it = evalFunL("+");
+    it.should.be.a('function');
+  });
+
+  it("should evaluate seqs", function() {
+    evalFunL("[1, 3.14, \"hi\"]").print().should.eq('[1 3.14 "hi"]');
+  });
+
+  it("should evaluate function application", function() {
+    evalFunL("+:[1,2]").toJS().should.eq(3);
+  });
 });
