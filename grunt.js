@@ -9,6 +9,16 @@ module.exports = function(grunt) {
   
   // Project configuration.
   grunt.initConfig({
+    coffee: {
+      compile: {
+        options: {
+          bare: true
+        },
+        files: {
+          'lib/funl.js': ['lib/funl.coffee']
+        }
+      }
+    },
     exec: {
       mocha: {
         command: "mocha --no-colors",
@@ -17,8 +27,7 @@ module.exports = function(grunt) {
       }
     },
     lint: {
-      files: ['grunt.js',
-              'lib/funl.js']
+      files: ['grunt.js']
     },
     watch: {
       files: ['lib/**/*.js',
@@ -56,7 +65,7 @@ module.exports = function(grunt) {
                      "FunL.Parser = " + parser.toSource().replace("this.SyntaxError", "FunL.Parser.SyntaxError") + ";\n");
   });
 
-  grunt.registerTask('test', 'build-parser lint exec:mocha');
+  grunt.registerTask('test', 'build-parser coffee lint exec:mocha');
 
   // Default task.
   grunt.registerTask('default', 'test');
