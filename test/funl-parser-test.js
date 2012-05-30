@@ -14,7 +14,7 @@ Assertion.addMethod('mapTo', function (compObj) {
 
 describe("The FunL parser", function() {
   it("should parse integers", function() {
-    eparse("1").should.mapTo({type: 'int', value: 1});
+    eparse("1").should.mapTo({type: 'integer', value: 1});
   });
 
   it("should parse floats", function() {
@@ -43,7 +43,7 @@ describe("The FunL parser", function() {
     var it = eparse('[1 "two" 3]');
     it.should.have.property('type', 'seq');
     it.value.should.have.length(3);
-    it.value[0].should.mapTo({type: 'int', value: 1});
+    it.value[0].should.mapTo({type: 'integer', value: 1});
   });
 
   it("should parse sequences with complex values", function() {
@@ -58,7 +58,7 @@ describe("The FunL parser", function() {
     it.should.have.property('type', 'map');
     it.value.should.have.length(4);
     it.value[0].should.mapTo({type: "string", value: "foo"});
-    it.value[1].should.mapTo({type: "int", value: 1});
+    it.value[1].should.mapTo({type: "integer", value: 1});
   });
 
   it("can handle whitespace, newlines, and comments", function() {
@@ -77,7 +77,7 @@ describe("The FunL parser", function() {
     var it = eparse("map[1]");
     it.should.have.property('type', 'application');
     it.value[0].should.mapTo({type: "keyword", value: "map"});
-    it.value[1].should.mapTo({type: "int", value: 1});
+    it.value[1].should.mapTo({type: "integer", value: 1});
   });
 
   it("should nest application right-to-left", function() {

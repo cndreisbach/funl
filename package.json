@@ -5,6 +5,7 @@
   "main": "./lib/funl",
   "dependencies": {
     "pegjs": "*",
+    "klass": "*",
     "underscore": "*"
   },
   "devDependencies": {
