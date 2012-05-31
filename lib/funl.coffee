@@ -62,30 +62,36 @@ handlers =
     new Repr.Seq(elements)
 
   keyword: (ast, env) ->
-    env[ast.value] ? throw new Error("Undefined function #{ast.value}")
+    env[ast.value] ? throw new Error("Undefined keyword #{ast.value}")
 
   application: (ast, env) ->
     [left, right] = (evalAST(element, env) for element in ast.value)
     left.call(left, right)
+
+  constant: (ast, env) ->
+    -> evalAST(ast.value, env)
 
 isA = (type, expr) ->
   typeof expr is type
 
 evalAST = (ast, env) ->
   env = _.clone(primitives) unless env?
-  if ast.type? and isA("function", handlers[ast.type])
-    handlers[ast.type] ast, env
-  else
-    throw new Error("NOT IMPLEMENT")
+  try
+    if ast.type? and isA("function", handlers[ast.type])
+      handlers[ast.type] ast, env
+    else
+      throw new Error("Not implemented yet")
+  catch e
+    e.message += " at line #{ast.line}, column #{ast.column}"
+    throw e
 
 evalFunL = (code) ->
   try
     ast = Parser.parse(code)
-    return evalAST(ast)
-  # catch e
-  #   if e instanceof Parser.SyntaxError
-  #     e.message = "Syntax error at line #{e.line} column #{e.column}."
-  #   throw e
+  catch e
+    e.message = "Syntax error at line #{e.line}, column #{e.column}"
+    throw e
+  evalAST(ast)
 
 FunL.Parser = Parser
 FunL.evalFunL = evalFunL

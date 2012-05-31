@@ -5,6 +5,7 @@ var evalFunL = FunL.evalFunL;
 describe("The FunL interpreter", function() {
   it("should interpret integers", function() {
     evalFunL("1").print().should.eq("1");
+    evalFunL("1").should.be.instanceof(FunL.Repr.Integer);
   });
 
   it("should interpret floats", function() {
@@ -26,5 +27,14 @@ describe("The FunL interpreter", function() {
 
   it("should evaluate function application", function() {
     evalFunL("+:[1,2]").toJS().should.eq(3);
+  });
+
+  it("should evaluate tight function application", function() {
+    evalFunL("+[[2,2]]").toJS().should.eq(4);
+  });
+
+  it("should evaluate constants", function() {
+    evalFunL("~1").should.be.a('function');
+    evalFunL("~1:1").should.be.instanceof(FunL.Repr.Integer);
   });
 });
