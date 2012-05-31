@@ -24,6 +24,7 @@ class Type.Number extends Type.Value
   promote: (other, value) -> new other.constructor(value)
   plus: (other) -> @promote(other, @value + other.value)
   minus: (other) -> @promote(other, @value - other.value)
+  product: (other) -> @promote(other, @value * other.value)
 
 class Type.Integer extends Type.Number
 class Type.Float extends Type.Number
@@ -57,6 +58,11 @@ primitives =
     left = arr.get(0)
     right = arr.get(1)
     left.minus(right)
+
+  "*": new Type.Function (arr) ->
+    left = arr.get(0)
+    right = arr.get(1)
+    left.product(right)
 
 handlers =
   program: (ast, env) ->
@@ -108,6 +114,9 @@ handlers =
     else
       evalAST(ast.value[2], env)
 
+  definition: (ast, env) ->
+    env[ast.value[0].value] = evalAST(ast.value[1], env)
+
 isA = (type, expr) ->
   typeof expr is type
 
@@ -119,7 +128,7 @@ evalAST = (ast, env) ->
     else
       throw new Error("Not implemented yet")
   catch e
-    e.message += " at line #{ast.line}, column #{ast.column}"
+    e.message += "\n at line #{ast.line}, column #{ast.column}"
     throw e
 
 evalFunL = (code) ->

@@ -55,4 +55,8 @@ describe("The FunL interpreter", function() {
     evalFunL("#t ? 0 ; 1").toJS().should.eq(0);
     evalFunL("#f ? 0 ; 1").toJS().should.eq(1);
   });
+
+  it("can evaluate definitions", function() {
+    evalFunL("sum-and-product = <+, *> \n sum-and-product:[2, 3]").toJS().should.eql([5, 6])
+  });
 });
