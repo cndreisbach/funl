@@ -107,6 +107,13 @@ describe("The FunL parser", function() {
     it.value[0].should.mapTo({type: "keyword", value: "first"});
   });
 
+  it("should handle construction + application", function() {
+    var it = eparse("<first second>:[1, 2]")
+    it.should.have.property('type', 'application');
+    it.value.should.have.length(2);
+    it.value[0].type.should.eq("construction")
+  });
+
   it("should handle composition", function() {
     var it = eparse("a:b | c");
     it.should.have.property('type', 'composition');

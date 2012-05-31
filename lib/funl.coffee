@@ -8,13 +8,13 @@ class Type.Value
   constructor: (@value) ->
   print: -> "" + @value
   toJS: -> @value
-  fapply: (value) -> this
+  fapply: (arg) -> this
 
 class Type.Boolean extends Type.Value
-  fapply: (value) ->
+  fapply: (arg) ->
     # if this is true, then return the applied value
     # else return false
-    if @value then value else @value
+    if @value then arg else @value
 
 class Type.Number extends Type.Value
   # TODO prevent non-numbers from being used
@@ -37,13 +37,20 @@ class Type.Seq extends Type.Value
 
   toJS: -> (element.toJS() for element in @value)
 
+class Type.Function extends Type.Value
+  fapply: (arg) ->
+    @value(arg)
+
 primitives =
-  "+": (arr) ->
+  id: new Type.Function (arg) ->
+    arg
+
+  "+": new Type.Function (arr) ->
     left = arr.get(0)
     right = arr.get(1)
     left.plus(right)
 
-  "-": (arr) ->
+  "-": new Type.Function (arr) ->
     left = arr.get(0)
     right = arr.get(1)
     left.minus(right)
@@ -73,12 +80,23 @@ handlers =
   keyword: (ast, env) ->
     env[ast.value] ? throw new Error("Undefined keyword #{ast.value}")
 
+  composition: (ast, env) ->
+    [left, right] = (evalAST(element, env) for element in ast.value)
+    new Type.Function (arg) ->
+      right.fapply(left.fapply(arg))
+
+  construction: (ast, env) ->
+    elements = (evalAST(element, env) for element in ast.value)
+    new Type.Function (arg) ->
+      results = (element.fapply(arg) for element in elements)
+      new Type.Seq(results)
+
   application: (ast, env) ->
     [left, right] = (evalAST(element, env) for element in ast.value)
-    left.call(left, right)
+    left.fapply(right)
 
   constant: (ast, env) ->
-    -> evalAST(ast.value, env)
+    new Type.Function (arg) -> evalAST(ast.value, env)
 
 isA = (type, expr) ->
   typeof expr is type

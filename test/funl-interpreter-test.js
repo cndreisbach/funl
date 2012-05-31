@@ -17,13 +17,13 @@ describe("The FunL interpreter", function() {
   });
 
   it("should interpret booleans", function() {
-    evalFunL("#t").toJS().should.equal(true);
-    evalFunL("#f").toJS().should.equal(false);
+    evalFunL("#t").toJS().should.eq(true);
+    evalFunL("#f").toJS().should.eq(false);
   });
 
   it("should evaluate keywords", function() {
     var it = evalFunL("+");
-    it.should.be.a('function');
+    it.should.be.instanceof(FunL.Type.Function);
   });
 
   it("should evaluate seqs", function() {
@@ -39,7 +39,15 @@ describe("The FunL interpreter", function() {
   });
 
   it("should evaluate constants", function() {
-    evalFunL("~1").should.be.a('function');
+    evalFunL("~1").should.be.instanceof(FunL.Type.Function);
     evalFunL("~1:1").should.be.instanceof(FunL.Type.Integer);
+  });
+
+  it("should evaluate composition", function() {
+    evalFunL("(+ | id):[1, 2]").toJS().should.eq(3);
+  });
+
+  it("should evaluate construction", function() {
+    evalFunL("<+, ->:[4, 2]").toJS().should.eql([6, 2]);
   });
 });
