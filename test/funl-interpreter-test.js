@@ -5,7 +5,7 @@ var evalFunL = FunL.evalFunL;
 describe("The FunL interpreter", function() {
   it("should interpret integers", function() {
     evalFunL("1").print().should.eq("1");
-    evalFunL("1").should.be.instanceof(FunL.Repr.Integer);
+    evalFunL("1").should.be.instanceof(FunL.Type.Integer);
   });
 
   it("should interpret floats", function() {
@@ -14,6 +14,11 @@ describe("The FunL interpreter", function() {
 
   it("should interpret strings", function() {
     evalFunL('"hello world"').print().should.eq('"hello world"');
+  });
+
+  it("should interpret booleans", function() {
+    evalFunL("#t").toJS().should.equal(true);
+    evalFunL("#f").toJS().should.equal(false);
   });
 
   it("should evaluate keywords", function() {
@@ -35,6 +40,6 @@ describe("The FunL interpreter", function() {
 
   it("should evaluate constants", function() {
     evalFunL("~1").should.be.a('function');
-    evalFunL("~1:1").should.be.instanceof(FunL.Repr.Integer);
+    evalFunL("~1:1").should.be.instanceof(FunL.Type.Integer);
   });
 });

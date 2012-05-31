@@ -2,45 +2,51 @@ FunL = module.exports = {}
 Parser = require("./funl-parser").Parser
 _ = require("underscore")
 
-Repr = {}
+Type = {}
 
-class Repr.Value
+class Type.Value
   constructor: (@value) ->
-
-  print: ->
-    "" + @value
-
+  print: -> "" + @value
   toJS: -> @value
-
   fapply: (value) -> this
 
-class Repr.Number extends Repr.Value
-  plus: (other) ->
-    new other.constructor(@value + other.value)
+class Type.Boolean extends Type.Value
+  fapply: (value) ->
+    # if this is true, then return the applied value
+    # else return false
+    if @value then value else @value
 
-class Repr.Integer extends Repr.Number
+class Type.Number extends Type.Value
+  # TODO prevent non-numbers from being used
+  promote: (other, value) -> new other.constructor(value)
+  plus: (other) -> @promote(other, @value + other.value)
+  minus: (other) -> @promote(other, @value - other.value)
 
-class Repr.Float extends Repr.Number
+class Type.Integer extends Type.Number
+class Type.Float extends Type.Number
+  promote: (other, value) -> new Type.Float(value)
 
-class Repr.String extends Repr.Value
-  print: ->
-    return "\"#{@value}\""
+class Type.String extends Type.Value
+  print: -> "\"#{@value}\""
 
-class Repr.Seq extends Repr.Value
+class Type.Seq extends Type.Value
   print: ->
     "[" + (element.print() for element in @value).join(" ") + "]"
 
-  get: (n) ->
-    @value[n]
+  get: (n) -> @value[n]
 
-  toJS: ->
-    (element.toJS() for element in @value)
+  toJS: -> (element.toJS() for element in @value)
 
 primitives =
   "+": (arr) ->
     left = arr.get(0)
     right = arr.get(1)
-    left.plus right
+    left.plus(right)
+
+  "-": (arr) ->
+    left = arr.get(0)
+    right = arr.get(1)
+    left.minus(right)
 
 handlers =
   program: (ast, env) ->
@@ -48,18 +54,21 @@ handlers =
       retval = evalAST(element, env)
     retval
 
+  boolean: (ast, env) ->
+    new Type.Boolean(ast.value)
+
   integer: (ast, env) ->
-    new Repr.Integer(ast.value)
+    new Type.Integer(ast.value)
 
   float: (ast, env) ->
-    new Repr.Float(ast.value)
+    new Type.Float(ast.value)
 
   string: (ast, env) ->
-    new Repr.String(ast.value)
+    new Type.String(ast.value)
 
   seq: (ast, env) ->
     elements = (evalAST(element, env) for element in ast.value)
-    new Repr.Seq(elements)
+    new Type.Seq(elements)
 
   keyword: (ast, env) ->
     env[ast.value] ? throw new Error("Undefined keyword #{ast.value}")
@@ -95,4 +104,4 @@ evalFunL = (code) ->
 
 FunL.Parser = Parser
 FunL.evalFunL = evalFunL
-FunL.Repr = Repr
+FunL.Type = Type
