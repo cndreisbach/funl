@@ -22,9 +22,10 @@ class Type.Boolean extends Type.Value
 class Type.Number extends Type.Value
   # TODO prevent non-numbers from being used
   promote: (other, value) -> new other.constructor(value)
-  plus: (other) -> @promote(other, @value + other.value)
-  minus: (other) -> @promote(other, @value - other.value)
+  sum: (other) -> @promote(other, @value + other.value)
+  difference: (other) -> @promote(other, @value - other.value)
   product: (other) -> @promote(other, @value * other.value)
+  quotient: (other) -> @promote(other, @value / other.value)
 
 class Type.Integer extends Type.Number
 class Type.Float extends Type.Number
@@ -49,20 +50,34 @@ primitives =
   id: new Type.Function (arg) ->
     arg
 
+  fold: new Type.Function (fn) ->
+    new Type.Function (seq) ->
+      tmpfn = (total, list) ->
+        if list.length > 0
+          tmpfn(fn.fapply(new Type.Seq([total, list[0]])), list.slice(1))
+        else
+          total
+      tmpfn(seq.get(0), seq.value.slice(1))
+
   "+": new Type.Function (arr) ->
     left = arr.get(0)
     right = arr.get(1)
-    left.plus(right)
+    left.sum(right)
 
   "-": new Type.Function (arr) ->
     left = arr.get(0)
     right = arr.get(1)
-    left.minus(right)
+    left.difference(right)
 
   "*": new Type.Function (arr) ->
     left = arr.get(0)
     right = arr.get(1)
     left.product(right)
+
+  "/": new Type.Function (arr) ->
+    left = arr.get(0)
+    right = arr.get(1)
+    left.divide(right)
 
 handlers =
   program: (ast, env) ->
@@ -128,7 +143,7 @@ evalAST = (ast, env) ->
     else
       throw new Error("Not implemented yet")
   catch e
-    e.message += "\n at line #{ast.line}, column #{ast.column}"
+    e.message += "\n in #{ast.type} at line #{ast.line}, column #{ast.column}"
     throw e
 
 evalFunL = (code) ->
