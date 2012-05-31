@@ -9,12 +9,15 @@ class Type.Value
   print: -> "" + @value
   toJS: -> @value
   fapply: (arg) -> this
+  true: -> true
 
 class Type.Boolean extends Type.Value
   fapply: (arg) ->
     # if this is true, then return the applied value
     # else return false
     if @value then arg else @value
+  true: ->
+    @value
 
 class Type.Number extends Type.Value
   # TODO prevent non-numbers from being used
@@ -97,6 +100,13 @@ handlers =
 
   constant: (ast, env) ->
     new Type.Function (arg) -> evalAST(ast.value, env)
+
+  conditional: (ast, env) ->
+    pred = evalAST(ast.value[0], env)
+    if pred.true()
+      evalAST(ast.value[1], env)
+    else
+      evalAST(ast.value[2], env)
 
 isA = (type, expr) ->
   typeof expr is type

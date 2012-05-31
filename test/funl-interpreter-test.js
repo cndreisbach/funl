@@ -50,4 +50,9 @@ describe("The FunL interpreter", function() {
   it("should evaluate construction", function() {
     evalFunL("<+, ->:[4, 2]").toJS().should.eql([6, 2]);
   });
+
+  it("should evaluate conditionals", function() {
+    evalFunL("#t ? 0 ; 1").toJS().should.eq(0);
+    evalFunL("#f ? 0 ; 1").toJS().should.eq(1);
+  });
 });
