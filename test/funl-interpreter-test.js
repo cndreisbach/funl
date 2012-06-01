@@ -57,10 +57,18 @@ describe("The FunL interpreter", function() {
   });
 
   it("can evaluate definitions", function() {
-    evalFunL("sum-and-product = <+, *> \n sum-and-product:[2, 3]").toJS().should.eql([5, 6])
+    evalFunL("sum-and-product = <+, *> \n sum-and-product:[2, 3]").toJS().should.eql([5, 6]);
+  });
+
+  it("can use map", function() {
+    evalFunL("map[(<id, 2> | *)]:[1, 2, 3]").toJS().should.eql([2, 4, 6]);
   });
 
   it("can use fold", function() {
     evalFunL("fold[+]:[1, 2, 3, 4]").toJS().should.eq(10);
+  });
+
+  it("can compute length", function() {
+    evalFunL("length = map[1] | fold[+] \n length:[1, 2, 3, 4, 10]").toJS().should.eq(5);
   });
 });

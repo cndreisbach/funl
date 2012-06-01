@@ -15,6 +15,7 @@ module.exports = function(grunt) {
           bare: true
         },
         files: {
+          'lib/funl/type.js': ['lib/funl/type.coffee'],
           'lib/funl.js': ['lib/funl.coffee']
         }
       }

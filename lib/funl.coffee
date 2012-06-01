@@ -1,50 +1,8 @@
-FunL = module.exports = {}
-Parser = require("./funl-parser").Parser
 _ = require("underscore")
 
-Type = {}
-
-class Type.Value
-  constructor: (@value) ->
-  print: -> "" + @value
-  toJS: -> @value
-  fapply: (arg) -> this
-  true: -> true
-
-class Type.Boolean extends Type.Value
-  fapply: (arg) ->
-    # if this is true, then return the applied value
-    # else return false
-    if @value then arg else @value
-  true: ->
-    @value
-
-class Type.Number extends Type.Value
-  # TODO prevent non-numbers from being used
-  promote: (other, value) -> new other.constructor(value)
-  sum: (other) -> @promote(other, @value + other.value)
-  difference: (other) -> @promote(other, @value - other.value)
-  product: (other) -> @promote(other, @value * other.value)
-  quotient: (other) -> @promote(other, @value / other.value)
-
-class Type.Integer extends Type.Number
-class Type.Float extends Type.Number
-  promote: (other, value) -> new Type.Float(value)
-
-class Type.String extends Type.Value
-  print: -> "\"#{@value}\""
-
-class Type.Seq extends Type.Value
-  print: ->
-    "[" + (element.print() for element in @value).join(" ") + "]"
-
-  get: (n) -> @value[n]
-
-  toJS: -> (element.toJS() for element in @value)
-
-class Type.Function extends Type.Value
-  fapply: (arg) ->
-    @value(arg)
+FunL = module.exports = {}
+Parser = require("./funl-parser").Parser
+Type = require("./funl/type")
 
 primitives =
   id: new Type.Function (arg) ->
@@ -58,6 +16,11 @@ primitives =
         else
           total
       tmpfn(seq.get(0), seq.value.slice(1))
+
+  map: new Type.Function (fn) ->
+    new Type.Function (seq) ->
+      newList = (fn.fapply(element) for element in seq.value)
+      new Type.Seq(newList)
 
   "+": new Type.Function (arr) ->
     left = arr.get(0)
@@ -120,7 +83,8 @@ handlers =
     left.fapply(right)
 
   constant: (ast, env) ->
-    new Type.Function (arg) -> evalAST(ast.value, env)
+    val = evalAST(ast.value, env)
+    new Type.Function (arg) -> val
 
   conditional: (ast, env) ->
     pred = evalAST(ast.value[0], env)
@@ -130,6 +94,7 @@ handlers =
       evalAST(ast.value[2], env)
 
   definition: (ast, env) ->
+    # TODO stop redefinition
     env[ast.value[0].value] = evalAST(ast.value[1], env)
 
 isA = (type, expr) ->
