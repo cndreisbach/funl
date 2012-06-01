@@ -100,8 +100,11 @@ handlers =
 isA = (type, expr) ->
   typeof expr is type
 
+freshEnv = ->
+  _.clone(primitives)
+
 evalAST = (ast, env) ->
-  env = _.clone(primitives) unless env?
+  env = freshEnv() unless env?
   try
     if ast.type? and isA("function", handlers[ast.type])
       handlers[ast.type] ast, env
@@ -111,14 +114,16 @@ evalAST = (ast, env) ->
     e.message += "\n in #{ast.type} at line #{ast.line}, column #{ast.column}"
     throw e
 
-evalFunL = (code) ->
+evalFunL = (code, env) ->
   try
     ast = Parser.parse(code)
   catch e
     e.message = "Syntax error at line #{e.line}, column #{e.column}"
     throw e
-  evalAST(ast)
+  env = freshEnv() unless env?
+  evalAST(ast, env)
 
 FunL.Parser = Parser
 FunL.evalFunL = evalFunL
 FunL.Type = Type
+FunL.freshEnv = freshEnv

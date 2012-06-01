@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+var repl = require('repl'),
+    FunL = require('../lib/funl'),
+    env = FunL.freshEnv(),
+    prompt = "funl> ";
+
+var eval = function (cmd, callback) {
+  callback(null, FunL.evalFunL(cmd).toJS());
+};
+
+var evalFunL = function(code, context, file, cb) {
+  var err, result;
+  try {
+    result = FunL.evalFunL(code, env).toJS();
+  } catch (e) {
+    err = e;
+  }
+  cb(err, result);
+};
+
+repl.start(prompt, null, evalFunL);
