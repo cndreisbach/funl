@@ -34,6 +34,10 @@ describe("The FunL interpreter", function() {
     evalFunL("[1, 3.14]:1").toJS().should.eq(3.14);
   });
 
+  it("should evaluate maps", function () {
+    evalFunL('{"a" 1 "b" 2}').toJS().should.eq({"a": 1, "b": 2});
+  });
+
   it("should evaluate function application", function() {
     evalFunL("+:[1,2]").toJS().should.eq(3);
   });
