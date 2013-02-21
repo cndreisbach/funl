@@ -1,4 +1,5 @@
 var should = require("chai").should();
+var expect = require("chai").expect;
 var FunL = require("../lib/funl");
 var evalFunL = FunL.evalFunL;
 
@@ -32,6 +33,10 @@ describe("The FunL interpreter", function() {
 
   it("should evaluate seq application", function () {
     evalFunL("[1, 3.14]:1").toJS().should.eq(3.14);
+  });
+
+  it("should return undefined on invalid seq application", function () {
+    expect(evalFunL("[1, 3.14]:+")).to.be.undefined;
   });
 
   it("should evaluate maps", function () {

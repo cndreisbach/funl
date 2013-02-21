@@ -38,6 +38,9 @@ class Type.Seq extends Type.Value
 
   toJS: -> (element.toJS() for element in @value)
 
+  fapply: (arg) ->
+    @get(arg.toJS())
+
 class Type.Function extends Type.Value
   fapply: (arg) ->
     @value(arg)
