@@ -30,6 +30,10 @@ describe("The FunL interpreter", function() {
     evalFunL("[1, 3.14, \"hi\"]").print().should.eq('[1 3.14 "hi"]');
   });
 
+  it("should evaluate seq application", function () {
+    evalFunL("[1, 3.14]:1").toJS().should.eq(3.14);
+  });
+
   it("should evaluate function application", function() {
     evalFunL("+:[1,2]").toJS().should.eq(3);
   });
