@@ -1,7 +1,5 @@
 # The FunL Programming Language
 
-Clinton N. Dreisbach <crnixon@gmail.com>
-
 ## Short description
 
 FunL is a function-level language as defined by John Backus in his
