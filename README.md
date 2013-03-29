@@ -24,7 +24,7 @@ All values in FunL are also functions, allowing the composition of any
 combination of values and functions in the language.
 
 For a more full description, see
-http://github.com/crnixon/funl/blob/master/description.md.
+http://github.com/cndreisbach/funl/blob/master/description.md.
 
 ## Example
 
