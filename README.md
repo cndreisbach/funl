@@ -29,7 +29,7 @@ http://github.com/cndreisbach/funl/blob/master/description.md.
 ## Example
 
 ```funl
-def length = map:1 | fold:+
+length = map:1 | fold:+
 
 length:[1, 2, 3] // => 3
 
