@@ -64,6 +64,10 @@ handlers =
     elements = (evalAST(element, env) for element in ast.value)
     new Type.Seq(elements)
 
+  map: (ast, env) ->
+    elements = (evalAST(element, env) for element in ast.value)
+    new Type.Map(elements)
+
   keyword: (ast, env) ->
     env[ast.value] ? throw new Error("Undefined keyword #{ast.value}")
 

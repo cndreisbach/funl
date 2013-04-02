@@ -40,7 +40,16 @@ describe("The FunL interpreter", function() {
   });
 
   it("should evaluate maps", function () {
-    evalFunL('{"a" 1 "b" 2}').toJS().should.eq({"a": 1, "b": 2});
+    evalFunL('{"a" 1 "b" 2}').print().should.eq('{"a" 1 "b" 2}');
+  });
+
+  it("should evaluate map application", function () {
+    evalFunL('{"a" 7 "b" 2}:"a"').toJS().should.eq(7);
+    evalFunL('{"a" 1 "b" 2}:"b"').toJS().should.eq(2);
+  })
+
+  it("should return undefined on invalid map application", function () {
+    expect(evalFunL('{"a" 1 "b" 2}:"c"')).to.be.undefined;
   });
 
   it("should evaluate function application", function() {

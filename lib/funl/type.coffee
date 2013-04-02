@@ -41,6 +41,26 @@ class Type.Seq extends Type.Value
   fapply: (arg) ->
     @get(arg.toJS())
 
+class Type.Map extends Type.Value
+  constructor: (elements) ->
+    @value = ([el, elements[i+1]] for el, i in elements by 2)
+
+  print: ->
+    "{" + ("#{el[0].print()} #{el[1].print()}" for el in @value).join(" ") + "}"
+
+  get: (key) ->
+    (el[1] for el in @value when el[0].toJS() is key)[0]
+
+  toJS: ->
+    ([el[0].toJS(), el[1].toJS()] for el in @value).reduce((obj, v) ->
+      obj[v[0]] = v[1]
+      obj
+    , {})
+
+  fapply: (arg) ->
+    @get(arg.toJS())
+
 class Type.Function extends Type.Value
   fapply: (arg) ->
     @value(arg)
+
