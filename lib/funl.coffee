@@ -42,6 +42,10 @@ primitives =
     right = arr.get(1)
     left.divide(right)
 
+  "print": new Type.Function (arg) ->
+    console.log(arg.toJS())
+    arg
+
 handlers =
   program: (ast, env) ->
     for element in ast.value
